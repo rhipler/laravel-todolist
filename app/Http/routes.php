@@ -11,35 +11,22 @@
 |
 */
 
-/*Route::get('/', function () {
-    return view('welcome');
-});*/
 
-/*
-Route::get('user', function() {
-    return 'foo';
-});*/
 
-/*
-Route::get('tasks', ['uses' => 'TaskController@index']  );
 
-Route::get('tasks/{taskid}',  'TaskController@show');
-
-Route::get('tasks/{taskid}/edit', 'TaskController@edit' );
-*/
 Route::get('/',['uses' => 'TaskController@index'] );
 
 Route::resource('tasks','TaskController', ['parameters' => ['tasks' => 'taskid']] );
 
-Route::auth();
+//Route::auth();
 
-//Route::get('/login',['uses'=> 'AuthController@showLoginForm']);
-//Route::post('/login',['uses'=> 'AuthController@login']);
-//Route::get('/logout',['uses'=> 'AuthController@logout']);
+Route::get('/login',['uses'=> 'Auth\AuthController@showLoginForm']);
+Route::post('/login',['uses'=> 'Auth\AuthController@login']);
+Route::get('/logout',['uses'=> 'Auth\AuthController@logout']);
 
-//Route::get('/password/reset/{token?}',['uses'=> 'PasswordController@showResetForm']);
-//Route::post('/password/email',['uses'=> 'PasswordController@sendResetLinkEmail']);
-//Route::post('/password/reset',['uses'=> 'PasswordController@reset']);
+Route::get('/password/reset/{token?}',['uses'=> 'Auth\PasswordController@showResetForm']);
+Route::post('/password/email',['uses'=> 'Auth\PasswordController@sendResetLinkEmail']);
+Route::post('/password/reset',['uses'=> 'Auth\PasswordController@reset']);
 
 
 Route::get('/home', 'HomeController@index');

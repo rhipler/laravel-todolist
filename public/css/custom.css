@@ -2,6 +2,12 @@ html, body {
     height: 100%;
 }
 
+@media (min-width: 768px) {
+    .navbar .navbar-right {
+        margin-right: 0;
+    }
+}
+
 .title {
     text-align: center;
     background-color: #000000;
