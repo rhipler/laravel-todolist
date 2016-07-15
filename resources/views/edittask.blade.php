@@ -38,7 +38,7 @@
             </div>
 
             <div class="form-group">
-                Created at {{ date('d.m.Y H:i:s P',strtotime($task->created_at)) }}  now {{date(' H:i:s P')}}
+                Created at {{ date('d.m.Y H:i:s P',strtotime($task->created_at)) }}
             </div>
             <a class="btn btn-default" href="{{ url('/tasks')}}" >Cancel</a>
             <input type="submit" class="btn btn-primary" value="Save" />
