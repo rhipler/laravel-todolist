@@ -1,15 +1,14 @@
-@extends('page')
-
+@extends('layouts.page')
 
 @section('title','Create new task')
 
-@section('pagetitle','Create a new task')
-
 
 @section('content')
-    <div>
-        {{ var_dump($errors) }}
+    <div class="page-header">
+        <h2>Create new task</h2>
+    </div>
 
+    <div>
         @if (count($errors) > 0)
             <div class="alert alert-danger">
                 <ul>

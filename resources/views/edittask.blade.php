@@ -1,12 +1,12 @@
-@extends('page')
+@extends('layouts.page')
 
 @section('title','Edit task')
 
 
-@section('pagetitle','Edit Task')
-
-
 @section('content')
+    <div class="page-header">
+        <h2>Edit Task</h2>
+    </div>
     <div>
         @if (count($errors) > 0)
             <div class="alert alert-danger">

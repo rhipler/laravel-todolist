@@ -21,11 +21,12 @@ html, body {
     padding: 5px;
 }
 
+.page-header {
+    text-align: center;
+}
 .page-header h2 {
     margin: 0;
 }
-
-
 
 .tasklist.table>tbody>tr>td {
     vertical-align: middle;

@@ -1,11 +1,12 @@
-@extends('page')
+@extends('layouts.page')
 
 @section('title','TODO List - All tasks')
 
-@section('pagetitle','All Tasks')
-
 
 @section('content')
+    <div class="page-header">
+        <h2>All Tasks</h2>
+    </div>
 
     <div class="table-responsive">
         <table class="table tasklist table-striped table-hover">

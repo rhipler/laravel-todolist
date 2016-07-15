@@ -45,7 +45,7 @@ class TaskController extends Controller
     {
 
         //TODO validate
-        $this->validate($request, array('name' => 'required|max:255', 'duedate' =>'date_format:Y-d-m'));
+        $this->validate($request, array('name' => 'required|max:255', 'duedate' =>'date_format:Y-m-d'));
 
         $name = $request->input('name');
         $description = $request->input('description');
@@ -100,7 +100,7 @@ class TaskController extends Controller
     public function update($id, Request $request)
     {
 
-        $this->validate($request, array('name' => 'required|max:255', 'duedate' => 'date_format:Y-d-m'));
+        $this->validate($request, array('name' => 'required|max:255', 'duedate' => 'date_format:Y-m-d'));
 
         $duedate = ($request->input('duedate')) ? date('Y-m-d H:i:s', strtotime($request->input('duedate'))) : null;
 
