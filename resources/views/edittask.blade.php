@@ -38,18 +38,21 @@
             </div>
 
             <div class="form-group">
-                Created at {{ date('d.m.Y H:i:s P',strtotime($task->created_at)) }}
+                <label>Created at</label> {{ date('d.m.Y H:i:s P',strtotime($task->created_at)) }}
             </div>
+            <div class="form-group">
+                <label>Last Updated at</label> {{ date('d.m.Y H:i:s P',strtotime($task->updated_at)) }}
+            </div>
+
             <a class="btn btn-default" href="{{ url('/tasks')}}" >Cancel</a>
             <input type="submit" class="btn btn-primary" value="Save" />
         </form>
-
 
     </div>
 
     <script>
         $('.date').datepicker({autoclose: true, clearBtn: true,
-            language: 'de'
+            language: 'en'
         });
     </script>
 @endsection

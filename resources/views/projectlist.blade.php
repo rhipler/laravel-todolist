@@ -1,38 +1,38 @@
 @extends('layouts.page')
 
-@section('title','TODO List - All tasks')
+@section('title','TODO List - Projects')
 
 
 @section('content')
     <div class="page-header">
-        <h2>All Tasks</h2>
+        <h2>Projects</h2>
     </div>
 
     <div class="table-responsive">
-        <table class="table tasklist table-striped table-hover">
+        <table class="table projectlist table-striped table-hover">
             <tr>
                 <th>Title</th>
                 <th>Description</th>
-                <th>Due date</th>
                 <th></th>
             </tr>
 
-            @foreach ($tasks as $row )
+            @foreach ($projects as $row )
                 <tr class="">
-                    <td class="text-left"><a class="" href="{{url('tasks/'.$row->id.'/edit')}}">{{ $row->name }}</a></td>
+                    <td class="text-left"><a class="" href="{{url('project/'.$row->id.'/edit')}}">{{ $row->name }}</a></td>
                     <td class="text-left"> {{ $row->description }}</td>
-                    <td> {{ $row->duedate ?  date('d.m.Y', strtotime($row->duedate)) : ''  }} {{$row->duedate}} </td>
-                    <td><a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirmdelete" data-taskname="{{$row->name}}" data-taskid="{{$row->id}}">
-                        <span class="glyphicon glyphicon-trash"></span>
+                    <td><a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirmdelete" data-projectname="{{$row->name}}" data-projectid="{{$row->id}}">
+                            <span class="glyphicon glyphicon-trash"></span>
                         </a></td>
                 </tr>
             @endforeach
+
         </table>
+
     </div>
 
     <div class="btnbar">
-        {{ $tasks->links()  }}
-        <a class="btn btn-primary" href="{{url('tasks/create')}}">New Task</a>
+        {{--  $projects->links()  --}}
+        <a class="btn btn-primary" href="{{url('project/create')}}">New Project</a>
     </div>
 
     <div class="modal fade" id="confirmdelete" role="dialog" aria-labelledby="confirmdeleteLabel">
@@ -43,34 +43,32 @@
                     <h4 class="modal-title" id="myModalLabel"></h4>
                 </div>
                 <div class="modal-body">
-                    Delete Task "<span id="taskname"></span>"?
+                    Delete Project "<span id="projectname"></span>"?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" id="delete">Delete</button>
                 </div>
-                <input type="hidden" name="taskid" id="taskid">
+                <input type="hidden" name="projectid" id="projectid">
             </div>
         </div>
     </div>
     <script>
         $('#confirmdelete').on('show.bs.modal', function(event){
             var button = $(event.relatedTarget);
-            var taskname = button.data('taskname');
-            var taskid = button.data('taskid');
+            var projectname = button.data('projectname');
+            var projectid = button.data('projectid');
             var modal = $(this);
-            modal.find('#taskname').text(taskname);
-            modal.find('#taskid').val(taskid);
+            modal.find('#projectname').text(projectname);
+            modal.find('#projectid').val(projectid);
         })
 
         $('#delete').on('click', function() {
-            var id = $('#confirmdelete #taskid').val();
+            var id = $('#confirmdelete #projectid').val();
 
-            jQuery.post('{{url('/tasks/')}}'+'/'+id, {_method: 'DELETE', _token: '{{csrf_token()}}' }, function(){
+            jQuery.post('{{url('/project/')}}'+'/'+id, {_method: 'DELETE', _token: '{{csrf_token()}}' }, function(){
                 location.reload(true);
             } );
-
-            //$('#confirmdelete').modal('hide');
         });
     </script>
 @endsection

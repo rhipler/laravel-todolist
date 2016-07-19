@@ -8,25 +8,6 @@ html, body {
     }
 }
 
-.title {
-    text-align: center;
-    background-color: #000000;
-    color: #ffffff;
-}
-.title h1 {
-    margin: 0;
-    padding: 10px 0 10px 0;
-}
-
-
-.pagetitle {
-    background-color: #efefef;
-    color: #000000;
-}
-.pagetitle h2{
-    padding: 5px;
-}
-
 .page-header {
     text-align: center;
 }
@@ -36,15 +17,13 @@ html, body {
 
 .tasklist.table>tbody>tr>td {
     vertical-align: middle;
-   /* padding: 10px 5px;*/
-}
-
-.btnbar {
-    /*margin-top: 20px;*/
-    /*text-align: right;*/
 }
 
 .btnbar > a {
     margin-top: 20px;
     float: right;
+}
+
+label {
+    padding-right: 10px;
 }

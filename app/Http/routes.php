@@ -12,8 +12,6 @@
 */
 
 
-
-
 Route::get('/',['uses' => 'TaskController@index'] );
 
 Route::resource('tasks','TaskController', ['parameters' => ['tasks' => 'taskid']] );
@@ -30,3 +28,12 @@ Route::post('/password/reset',['uses'=> 'Auth\PasswordController@reset']);
 
 
 Route::get('/home', 'HomeController@index');
+
+
+Route::get('/project','ProjectController@index');
+Route::get('/project/create','ProjectController@create');
+Route::post('/project','ProjectController@store');
+Route::get('/project/{projectid}/edit','ProjectController@edit');
+Route::put('/project/{projectid}','ProjectController@update');
+
+Route::delete('/project/{projectid}','ProjectController@destroy');
