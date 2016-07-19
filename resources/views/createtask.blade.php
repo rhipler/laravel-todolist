@@ -34,6 +34,7 @@
                     <div class="input-group-addon"><span class="glyphicon glyphicon-th"></span></div>
                 </div>
             </div>
+            <input type="hidden" name="projectid" value="{{$projectid}}" />
 
             <a class="btn btn-default" href="{{ url('/tasks')}}" >Cancel</a>
             <input type="submit" class="btn btn-primary" value="Save" />

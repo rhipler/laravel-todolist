@@ -5,6 +5,7 @@ namespace Todolist\Http\Controllers;
 use Illuminate\Http\Request;
 use Todolist\Http\Requests;
 use Illuminate\Support\Facades\DB;
+use Todolist\Task;
 
 
 class TaskController extends Controller
@@ -30,8 +31,22 @@ class TaskController extends Controller
 
         $tasks = DB::table('tasks')->orderBy('id', 'ASC')->paginate(10);
 
-        return view('tasklist', ['tasks' => $tasks]);
+        return view('tasklist', ['tasks' => $tasks,'projectid'=>0, 'heading'=>'All Tasks']);
     }
+
+
+    /**
+     * list task of Project $projectid
+     * @param $projectid
+     */
+    public function listTasks($projectid)
+    {
+        $tasks = Task::where('projectid',$projectid)->paginate(10);
+
+        return view('tasklist', ['tasks' => $tasks,'projectid'=>$projectid, 'heading'=>'Tasks of Project '.$projectid]);
+
+    }
+
 
 
     /**
@@ -39,9 +54,9 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($projectid)
     {
-        return view('createtask');
+        return view('createtask',['projectid'=>$projectid]);
     }
 
 
@@ -55,14 +70,16 @@ class TaskController extends Controller
     {
 
         //TODO validate
-        $this->validate($request, array('name' => 'required|max:255', 'duedate' =>'date_format:Y-m-d'));
+        $this->validate($request, array('name' => 'required|max:255', 'duedate' =>'date_format:Y-m-d','projectid'=>'exists:projects,id'));
 
         $name = $request->input('name');
         $description = $request->input('description');
         $inputdate = $request->input('duedate');
         $duedate = ($inputdate) ? date('Y-m-d H:i:s', strtotime($inputdate)) : null;
 
-        DB::table('tasks')->insert(['name' => $name, 'description' => $description, 'duedate' => $duedate, 'created_at' => date('Y-m-d H:i:s P')]);
+        DB::table('tasks')->insert(['name' => $name, 'description' => $description,
+            'duedate' => $duedate, 'created_at' => date('Y-m-d H:i:s P'),
+            'projectid' => $request->input('projectid')]);
 
         return redirect('/tasks');
     }

@@ -5,7 +5,7 @@
 
 @section('content')
     <div class="page-header">
-        <h2>All Tasks</h2>
+        <h2>{{ $heading }}</h2>
     </div>
 
     <div class="table-responsive">
@@ -32,7 +32,10 @@
 
     <div class="btnbar">
         {{ $tasks->links()  }}
-        <a class="btn btn-primary" href="{{url('tasks/create')}}">New Task</a>
+        @if ($projectid != 0)
+        <a class="btn btn-primary" href="{{url('tasks/create/'.$projectid )}}">New Task</a>
+
+        @endif
     </div>
 
     <div class="modal fade" id="confirmdelete" role="dialog" aria-labelledby="confirmdeleteLabel">

@@ -12,9 +12,19 @@
 */
 
 
-Route::get('/',['uses' => 'TaskController@index'] );
+Route::get('/',['uses' => 'ProjectController@index'] );
 
-Route::resource('tasks','TaskController', ['parameters' => ['tasks' => 'taskid']] );
+//Route::resource('tasks','TaskController', ['parameters' => ['tasks' => 'taskid']] );
+
+Route::get('tasks','TaskController@index');
+Route::post('tasks','TaskController@store');
+Route::get('tasks/create/{projectid}','TaskController@create');
+Route::get('tasks/{taskid}','TaskController@show');
+Route::put('tasks/{taskid}','TaskController@update');
+Route::delete('tasks/{taskid}','TaskController@destroy');
+Route::get('tasks/{taskid}/edit','TaskController@edit');
+Route::get('/project/{projectid}/tasks','TaskController@listTasks');
+
 
 //Route::auth();
 
@@ -35,5 +45,5 @@ Route::get('/project/create','ProjectController@create');
 Route::post('/project','ProjectController@store');
 Route::get('/project/{projectid}/edit','ProjectController@edit');
 Route::put('/project/{projectid}','ProjectController@update');
-
 Route::delete('/project/{projectid}','ProjectController@destroy');
+

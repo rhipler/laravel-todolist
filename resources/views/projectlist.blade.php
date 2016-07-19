@@ -18,11 +18,15 @@
 
             @foreach ($projects as $row )
                 <tr class="">
-                    <td class="text-left"><a class="" href="{{url('project/'.$row->id.'/edit')}}">{{ $row->name }}</a></td>
+                    <td class="text-left"><a class="" href="{{url('project/'.$row->id.'/tasks')}}">{{ $row->name }}</a></td>
                     <td class="text-left"> {{ $row->description }}</td>
                     <td><a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirmdelete" data-projectname="{{$row->name}}" data-projectid="{{$row->id}}">
                             <span class="glyphicon glyphicon-trash"></span>
-                        </a></td>
+                        </a>
+                        <a class="btn btn-primary btn-sm" href="{{url('project/'.$row->id.'/edit')}}" >
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                    </td>
                 </tr>
             @endforeach
 
