@@ -10,10 +10,20 @@ use Todolist\Project;
 class ProjectController extends Controller
 {
 
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
 
     public function index()
     {
-        $projects = Project::all();
+        $projects = Project::orderBy('id','ASC')->get();
 
         return view('projectlist', ['projects'=>$projects] );
     }
@@ -25,12 +35,11 @@ class ProjectController extends Controller
     public function create()
     {
         return view('createproject');
-
     }
 
 
     /**
-     * store new craeted project
+     * store new created project
      * @param $request
      * @return \Illuminate\Http\Response
      */
@@ -58,7 +67,7 @@ class ProjectController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function edit($projectid) {
-        $project = Project::find($projectid);
+        $project = Project::findOrFail($projectid);
 
         return view('editproject',['project'=>$project]);
     }

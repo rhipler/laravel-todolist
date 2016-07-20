@@ -12,10 +12,9 @@ class AddProjectToTasksTable extends Migration
      */
     public function up()
     {
-        //
 
         Schema::table('tasks',function(Blueprint $table){
-            $table->integer('projectid')->nullable(false)->default(1);
+            $table->integer('projectid')->nullable(false);
             $table->foreign('projectid')->references('id')->on('projects')->onDelete('cascade')->onUpdate('cascade');
         });
     }

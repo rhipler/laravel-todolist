@@ -36,7 +36,7 @@
             </div>
             <input type="hidden" name="projectid" value="{{$projectid}}" />
 
-            <a class="btn btn-default" href="{{ url('/tasks')}}" >Cancel</a>
+            <a class="btn btn-default" href="{{ url('/project/'.$projectid.'/tasks')}}" >Cancel</a>
             <input type="submit" class="btn btn-primary" value="Save" />
         </form>
     </div>

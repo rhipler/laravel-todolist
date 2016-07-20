@@ -44,7 +44,7 @@
                 <label>Last Updated at</label> {{ date('d.m.Y H:i:s P',strtotime($task->updated_at)) }}
             </div>
 
-            <a class="btn btn-default" href="{{ url('/tasks')}}" >Cancel</a>
+            <a class="btn btn-default" href="{{ url('/project/' .$task->projectid .'/tasks')}}" >Cancel</a>
             <input type="submit" class="btn btn-primary" value="Save" />
         </form>
 

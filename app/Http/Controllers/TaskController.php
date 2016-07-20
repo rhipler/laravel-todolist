@@ -4,7 +4,6 @@ namespace Todolist\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Todolist\Http\Requests;
-use Illuminate\Support\Facades\DB;
 use Todolist\Task;
 
 
@@ -21,15 +20,15 @@ class TaskController extends Controller
         $this->middleware('auth');
     }
 
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
-    { 
-
-        $tasks = DB::table('tasks')->orderBy('id', 'ASC')->paginate(10);
+    {
+        $tasks = Task::orderBy('id','ASC')->paginate(10);
 
         return view('tasklist', ['tasks' => $tasks,'projectid'=>0, 'heading'=>'All Tasks']);
     }
@@ -41,10 +40,10 @@ class TaskController extends Controller
      */
     public function listTasks($projectid)
     {
-        $tasks = Task::where('projectid',$projectid)->paginate(10);
+
+        $tasks = Task::where('projectid',$projectid)->orderBy('id','ASC')->paginate(10);
 
         return view('tasklist', ['tasks' => $tasks,'projectid'=>$projectid, 'heading'=>'Tasks of Project '.$projectid]);
-
     }
 
 
@@ -69,19 +68,18 @@ class TaskController extends Controller
     public function store(Request $request)
     {
 
-        //TODO validate
         $this->validate($request, array('name' => 'required|max:255', 'duedate' =>'date_format:Y-m-d','projectid'=>'exists:projects,id'));
 
-        $name = $request->input('name');
-        $description = $request->input('description');
-        $inputdate = $request->input('duedate');
-        $duedate = ($inputdate) ? date('Y-m-d H:i:s', strtotime($inputdate)) : null;
 
-        DB::table('tasks')->insert(['name' => $name, 'description' => $description,
-            'duedate' => $duedate, 'created_at' => date('Y-m-d H:i:s P'),
-            'projectid' => $request->input('projectid')]);
+        $task = new Task();
+        $task->name = $request->input('name');
+        $task->description = $request->input('description');
+        $task->duedate =  ($request->input('duedate')) ? date('Y-m-d H:i:s', strtotime($request->input('duedate'))) : null;
+        $task->projectid = $request->input('projectid');
 
-        return redirect('/tasks');
+        $task->save();
+
+        return redirect('/project/'.$request->input('projectid').'/tasks');
     }
 
 
@@ -98,6 +96,7 @@ class TaskController extends Controller
         return view('showtask');
     }
 
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -106,12 +105,8 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        $task = DB::table('tasks')->where('id', $id)->first();
 
-        if (!$task) {
-            // Task not found
-            return redirect('/tasks');
-        }
+        $task = Task::findOrFail($id);
 
         return view('edittask', ['task' => $task]);
     }
@@ -131,13 +126,13 @@ class TaskController extends Controller
 
         $duedate = ($request->input('duedate')) ? date('Y-m-d H:i:s', strtotime($request->input('duedate'))) : null;
 
-        $affected = DB::table('tasks')->where('id', $id)
-            ->update(['name' => $request->input('name'),
-                'description' =>$request->input('description'),
-                'duedate' => $duedate,
-                'updated_at' => date('Y-m-d H:i:s P')] );
+        $task = Task::findOrFail($id);
+        $task->name = $request->input('name');
+        $task->description = $request->input('description');
+        $task->duedate = $duedate;
+        $task->save();
 
-        return redirect('/tasks');
+        return redirect('/project/' .$task->projectid .'/tasks');
     }
 
 
@@ -149,7 +144,7 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        DB::table('tasks')->where('id', '=', $id)->delete();
+        Task::destroy($id);
     }
 
 }

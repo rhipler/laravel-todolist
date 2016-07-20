@@ -26,7 +26,8 @@ class RouteServiceProvider extends ServiceProvider
     {
         //
         $router->pattern('taskid', '[0-9]+');
-        
+        $router->pattern('projectid', '[0-9]+');
+
         parent::boot($router);
     }
 
