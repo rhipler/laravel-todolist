@@ -14,4 +14,10 @@ class Task extends Model
     protected $dateFormat = 'Y-m-d H:i:s O';
 
 
+    public function project()
+    {
+        return $this->belongsTo('Todolist\project','projectid');
+    }
+
+
 }

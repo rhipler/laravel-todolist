@@ -15,4 +15,9 @@ class Project extends Model
     protected $dateFormat = 'Y-m-d H:i:s O';
 
 
+    public function tasks()
+    {
+        return $this->hasMany('Todolist\Task','projectid');
+    }
+
 }

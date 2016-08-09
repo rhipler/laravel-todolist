@@ -4,6 +4,7 @@ namespace Todolist\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Todolist\Http\Requests;
+use Todolist\Project;
 use Todolist\Task;
 
 
@@ -40,10 +41,12 @@ class TaskController extends Controller
      */
     public function listTasks($projectid)
     {
+        $project = Project::findOrFail($projectid);
 
-        $tasks = Task::where('projectid',$projectid)->orderBy('id','ASC')->paginate(10);
+        //$tasks = Task::where('projectid',$projectid)->orderBy('id','ASC')->paginate(10);
+        $tasks = $project->tasks()->orderBy('id','ASC')->paginate(10);
 
-        return view('tasklist', ['tasks' => $tasks,'projectid'=>$projectid, 'heading'=>'Tasks of Project '.$projectid]);
+        return view('tasklist', ['tasks' => $tasks,'projectid'=>$projectid, 'heading'=>'Tasks of Project '.$project->name] );
     }
 
 
