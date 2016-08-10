@@ -1,6 +1,6 @@
 @extends('layouts.page')
 
-@section('title','Create new Project')
+@section('title','Create new project')
 
 
 @section('content')

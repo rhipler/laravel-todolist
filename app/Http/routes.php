@@ -47,3 +47,12 @@ Route::get('/project/{projectid}/edit','ProjectController@edit');
 Route::put('/project/{projectid}','ProjectController@update');
 Route::delete('/project/{projectid}','ProjectController@destroy');
 
+
+
+Route::get('/users','UserManagementController@index');
+Route::get('/users/create','UserManagementController@create');
+Route::post('/users','UserManagementController@store');
+Route::get('/users/{userid}/edit','UserManagementController@edit');
+Route::put('/users/{userid}','UserManagementController@update');
+Route::delete('/users/{userid}','UserManagementController@destroy');
+
