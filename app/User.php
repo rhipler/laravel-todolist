@@ -2,10 +2,16 @@
 
 namespace Todolist;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+
+    use SoftDeletes;
+
+    protected $dates = ['created_at','updated_at','deleted_at'];
+
     /**
      * The attributes that are mass assignable.
      *
