@@ -19,5 +19,20 @@ class Task extends Model
         return $this->belongsTo('Todolist\project','projectid');
     }
 
+    public function createdByUser()
+    {
+        return $this->belongsTo('Todolist\User', 'created_by')->withTrashed();
+    }
+
+    public function expendedTimes()
+    {
+        return $this->hasMany('Todolist\ExpendedTime');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany('Todolist\Comment');
+    }
+
 
 }

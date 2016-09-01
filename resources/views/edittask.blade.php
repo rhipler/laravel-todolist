@@ -41,6 +41,9 @@
                 <label>Created at</label> {{ date('d.m.Y H:i:s P',strtotime($task->created_at)) }}
             </div>
             <div class="form-group">
+                <label>Created By</label> {{ $task->createdByUser->name}}
+            </div>
+            <div class="form-group">
                 <label>Last Updated at</label> {{ date('d.m.Y H:i:s P',strtotime($task->updated_at)) }}
             </div>
 

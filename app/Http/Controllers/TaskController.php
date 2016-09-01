@@ -3,6 +3,8 @@
 namespace Todolist\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Todolist\ExpendedTime;
 use Todolist\Http\Requests;
 use Todolist\Project;
 use Todolist\Task;
@@ -79,7 +81,9 @@ class TaskController extends Controller
         $task->description = $request->input('description');
         $task->duedate =  ($request->input('duedate')) ? date('Y-m-d H:i:s', strtotime($request->input('duedate'))) : null;
         $task->projectid = $request->input('projectid');
+        $task->createdByUser()->associate( Auth::user());
 
+        //$task->created_by = Auth::user()->id;
         $task->save();
 
         return redirect('/project/'.$request->input('projectid').'/tasks');
@@ -94,9 +98,20 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        //
+        $task = Task::with('comments')->with('expendedtimes')->findOrFail($id);
 
-        return view('showtask');
+
+        //$times = $task->expendedTimes;
+        //$comments = $task->comments;
+
+        //var_dump($task);
+
+        //var_dump($comments);
+        /*foreach ($times as $value) {
+            var_dump($value->date);
+        }*/
+
+        return view('showtask',['task'=>$task]);
     }
 
 
@@ -110,6 +125,7 @@ class TaskController extends Controller
     {
 
         $task = Task::findOrFail($id);
+
 
         return view('edittask', ['task' => $task]);
     }
@@ -148,6 +164,43 @@ class TaskController extends Controller
     public function destroy($id)
     {
         Task::destroy($id);
+    }
+
+
+    public function addTime($taskid, Request $request)
+    {
+
+        $this->validate($request, array('expdescription' => 'required|max:60', 'exptime' => 'required|numeric', 'expdate' => 'required|date_format:Y-m-d'));
+
+        $task = Task::findOrFail($taskid);
+
+
+        $expTime = new ExpendedTime();
+        $expTime->time = $request->input('exptime');
+        $expTime->description = $request->input('expdescription');
+        $expTime->date = $request->input('expdate');
+
+        $expTime->user()->associate(Auth::user());
+
+        $task->expendedTimes()->save($expTime);
+
+        return redirect('/tasks/'.$taskid);
+    }
+
+    public function deleteTime($timeid)
+    {
+
+    }
+
+
+    public function addComment($taskid)
+    {
+
+    }
+
+    public function deleteComment($commentid)
+    {
+
     }
 
 }

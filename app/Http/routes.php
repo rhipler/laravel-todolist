@@ -16,6 +16,7 @@ Route::get('/',['uses' => 'ProjectController@index'] );
 
 //Route::resource('tasks','TaskController', ['parameters' => ['tasks' => 'taskid']] );
 
+//tasks
 Route::get('tasks','TaskController@index');
 Route::post('tasks','TaskController@store');
 Route::get('tasks/create/{projectid}','TaskController@create');
@@ -26,8 +27,14 @@ Route::get('tasks/{taskid}/edit','TaskController@edit');
 Route::get('/project/{projectid}/tasks','TaskController@listTasks');
 
 
-//Route::auth();
+Route::post('tasks/{taskid}/addtime','TaskController@addTime');
+Route::delete('tasks/time/{timeid}','TaskController@deleteTime');
 
+Route::post('tasks/{taskid}/comment','TaskController@addComment');
+Route::delete('tasks/comment/{commentid}','TaskController@deleteComment');
+
+// login
+//Route::auth();
 Route::get('/login',['uses'=> 'Auth\AuthController@showLoginForm']);
 Route::post('/login',['uses'=> 'Auth\AuthController@login']);
 Route::get('/logout',['uses'=> 'Auth\AuthController@logout']);
@@ -39,7 +46,7 @@ Route::post('/password/reset',['uses'=> 'Auth\PasswordController@reset']);
 
 Route::get('/home', 'HomeController@index');
 
-
+//project
 Route::get('/project','ProjectController@index');
 Route::get('/project/create','ProjectController@create');
 Route::post('/project','ProjectController@store');

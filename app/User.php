@@ -39,5 +39,10 @@ class User extends Authenticatable
         return $this->belongsTo('Todolist\Role');
     }
 
+    public function createdTasks()
+    {
+        $this->hasMany('Todolist\Task','created_by');
+    }
+
 
 }

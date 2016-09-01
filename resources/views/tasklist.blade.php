@@ -19,7 +19,7 @@
 
             @foreach ($tasks as $row )
                 <tr class="">
-                    <td class="text-left"><a class="" href="{{url('tasks/'.$row->id.'/edit')}}">{{ $row->name }}</a></td>
+                    <td class="text-left"><a class="" href="{{url('tasks/'.$row->id.'')}}">{{ $row->name }}</a></td>
                     <td class="text-left"> {{ $row->description }}</td>
                     <td> {{ $row->duedate ?  date('d.m.Y', strtotime($row->duedate)) : ''  }} </td>
                     <td><a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirmdelete" data-taskname="{{$row->name}}" data-taskid="{{$row->id}}">
