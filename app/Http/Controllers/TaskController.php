@@ -4,6 +4,7 @@ namespace Todolist\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Todolist\Comment;
 use Todolist\ExpendedTime;
 use Todolist\Http\Requests;
 use Todolist\Project;
@@ -83,7 +84,6 @@ class TaskController extends Controller
         $task->projectid = $request->input('projectid');
         $task->createdByUser()->associate( Auth::user());
 
-        //$task->created_by = Auth::user()->id;
         $task->save();
 
         return redirect('/project/'.$request->input('projectid').'/tasks');
@@ -98,18 +98,13 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = Task::with('comments')->with('expendedtimes')->findOrFail($id);
-
-
-        //$times = $task->expendedTimes;
-        //$comments = $task->comments;
-
-        //var_dump($task);
-
-        //var_dump($comments);
-        /*foreach ($times as $value) {
-            var_dump($value->date);
-        }*/
+        $task = Task::with(['comments' => function ($query) {
+                $query->orderBy('created_at');
+            }])
+            ->with(['expendedtimes' => function ($query) {
+                $query->orderBy('date', 'ASC');
+            }])
+            ->findOrFail($id);
 
         return view('showtask',['task'=>$task]);
     }
@@ -189,18 +184,28 @@ class TaskController extends Controller
 
     public function deleteTime($timeid)
     {
+        ExpendedTime::destroy($timeid);
 
     }
 
 
-    public function addComment($taskid)
+    public function addComment($taskid, Request $request)
     {
+        $this->validate($request, ['comment' => 'required']);
+        $task = Task::findOrFail($taskid);
 
+        $comment = new Comment();
+        $comment->user()->associate(Auth::user());
+        $comment->comment = $request->input('comment');
+        $comment->task_id = $taskid;
+        $comment->save();
+
+        return redirect('/tasks/'.$taskid);
     }
 
     public function deleteComment($commentid)
     {
-
+        Comment::destroy($commentid);
     }
 
 }

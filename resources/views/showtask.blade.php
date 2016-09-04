@@ -75,7 +75,7 @@
                             <div class="form-group" style="position:relative">
                                 <div class="col-sm-10">
                                     <label class="control-label">New Comment</label>
-                                    <textarea class="form-control" rows="3"></textarea>
+                                    <textarea id="comment" name="comment" class="form-control" rows="3"></textarea>
                                 </div>
 
                                 <div class="form-bottom-right" style="">

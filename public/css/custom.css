@@ -8,6 +8,10 @@ html, body {
     }
 }
 
+.container {
+    margin-bottom: 50px;
+}
+
 .page-header {
     text-align: center;
 }
