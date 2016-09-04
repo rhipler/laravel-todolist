@@ -27,3 +27,31 @@ html, body {
 label {
     padding-right: 10px;
 }
+
+.border-panel {
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    padding: 5px 15px;
+    margin-bottom: 20px;
+}
+
+.form-bottom-right {
+    position: relative;
+    float: right;
+    margin-right: 15px;
+    margin-top: 20px;
+}
+
+@media (min-width: 768px) {
+
+    .form-bottom-right {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+}
+
+.form-addtime .alert {
+    margin-bottom: 0;
+
+}
