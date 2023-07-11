@@ -1,49 +1,40 @@
-@extends('layouts.page')
 
-@section('title','Edit Project')
+<x-app-layout>
 
+    <x-slot:header>
+        <h2 class="font-semibold text-3xl text-gray-800 leading-tight">Edit Project</h2>
+    </x-slot:header>
 
-@section('content')
-    <div class="page-header">
-        <h2>Edit Project</h2>
-    </div>
     <div>
-        @if (count($errors) > 0)
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
         <form action="{{url('/project/'.$project->id)}}" method="post">
-            {{ csrf_field() }}
+            @csrf
             <input type="hidden" name="id" value="{{$project->id}}" />
+            @method('put')
 
-            <input type="hidden" name="_method" value="PUT"/>
-
-            <div class="form-group">
-                <label for="name">Name</label> <input type="text" class="form-control" name="name" id="name"
-                                                      value="{{$project->name}}"/>
-            </div>
-            <div class="form-group">
-                <label for="description">Description</label><textarea class="form-control" name="description"
-                                                                      id="description"
-                                                                      rows="4">{{$project->description}}</textarea>
+            <div class="">
+                <x-input-label for="name" value="Name" />
+                <x-text-input class="mt-1 w-ful"  name="name" id="name" type="text" :value="old('name',$project->name)" />
+                <x-input-error :messages="$errors->get('name')" class="mt-2" />
             </div>
 
-            <div class="form-group">
-                <label>Created at </label> {{ $project->created_at }}
+            <div class="mt-4">
+                <x-input-label for="description" value="Description" />
+                <textarea class="mt-2 rounded-md" name="description" id="description" rows="4">{{old('description',$project->description) }}</textarea>
+                <x-input-error :messages="$errors->get('description')" class="mt-2" />
             </div>
 
-            <div class="form-group">
-                <label>Last updated at </label> {{ $project->updated_at }}
+            <div class="mt-2">
+                <x-input-label value="Created at" /> {{ $project->created_at }}
             </div>
 
-            <a class="btn btn-default" href="{{ url('/project')}}">Cancel</a>
-            <input type="submit" class="btn btn-primary" value="Save"/>
+            <div class="mt-2">
+                <x-input-label value="Last updated at" /> {{ $project->updated_at }}
+            </div>
+
+            <div class="mt-5">
+                <x-link-secondary-button :href="url('/project')" class="mr-4" >Cancel</x-link-secondary-button>
+                <x-primary-button type="submit">Save</x-primary-button>
+            </div>
         </form>
     </div>
-
-@endsection
+</x-app-layout>

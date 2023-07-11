@@ -1,26 +1,15 @@
 <?php
 
-namespace Todolist\Http\Controllers;
+namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Todolist\Http\Requests;
-use Todolist\Project;
+use App\Models\Project;
+use Illuminate\View\View;
 
 class ProjectController extends Controller
 {
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
 
     public function index()
     {
@@ -33,7 +22,7 @@ class ProjectController extends Controller
     /**
      * show form for creating new project
      */
-    public function create()
+    public function create(): View
     {
         return view('createproject');
     }
@@ -41,10 +30,8 @@ class ProjectController extends Controller
 
     /**
      * store new created project
-     * @param $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, $this->getRules());
 
@@ -53,7 +40,7 @@ class ProjectController extends Controller
         $project->description = $request->input('description');
         $project->save();
 
-        return redirect('/project');
+        return to_route('project.index');
     }
 
 
@@ -64,17 +51,16 @@ class ProjectController extends Controller
 
     /**
      * show edit project form
-     * @param $projectid
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($projectid) {
+    public function edit($projectid): View
+    {
         $project = Project::findOrFail($projectid);
 
         return view('editproject',['project'=>$project]);
     }
 
 
-    public function update($projectid, Request $request)
+    public function update($projectid, Request $request): RedirectResponse
     {
         $this->validate($request, $this->getRules());
 
@@ -83,13 +69,15 @@ class ProjectController extends Controller
         $project->description = $request->input('description');
         $project->save();
 
-        return redirect('/project');
+        return to_route('project.index');
     }
 
 
     public function destroy($projectid)
     {
         Project::destroy($projectid);
+
+        return to_route('project.index');
     }
 
 }

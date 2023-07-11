@@ -1,36 +1,29 @@
-@extends('layouts.page')
+<x-app-layout>
 
-@section('title','Create new project')
-
-
-@section('content')
-    <div class="page-header">
-        <h2>Create New Project</h2>
-    </div>
+    <x-slot:header>
+        <h2 class="font-semibold text-3xl text-gray-800 leading-tight">Create New Project</h2>
+    </x-slot:header>
 
     <div>
-        @if (count($errors) > 0)
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
         <form action="{{url('/project')}}" method="post">
-            {{ csrf_field() }}
+            @csrf
 
-            <div class="form-group">
-                <label for="name">Name</label> <input type="text" class="form-control" name="name" id="name" value="" />
-            </div>
-            <div class="form-group">
-                <label for="description">Description</label><textarea class="form-control" name="description" id="description" rows="4"></textarea>
+            <div class="">
+                <x-input-label for="name" value="Name" />
+                <x-text-input class="mt-1 w-ful"  name="name" id="name" type="text" :value="old('name')"  />
+                <x-input-error :messages="$errors->get('name')" class="mt-2" />
             </div>
 
-            <a class="btn btn-default" href="{{ url('/project')}}" >Cancel</a>
-            <input type="submit" class="btn btn-primary" value="Save" />
+            <div class="mt-4">
+                <x-input-label for="description" value="Description" />
+                <textarea class="mt-2 rounded-md" name="description" id="description" rows="4">{{old('description')}}</textarea>
+                <x-input-error :messages="$errors->get('description')" class="mt-2" />
+            </div>
+
+            <div class="mt-5">
+                <x-link-secondary-button :href="url('/project')" >Cancel</x-link-secondary-button>
+                <x-primary-button type="submit">Save</x-primary-button>
+            </div>
         </form>
     </div>
-
-@endsection
+</x-app-layout>

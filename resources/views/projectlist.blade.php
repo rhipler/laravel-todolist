@@ -1,79 +1,61 @@
-@extends('layouts.page')
+<x-app-layout>
+    <x-slot:header>
+        <h2 class="font-semibold text-3xl text-gray-800 leading-tight ">Projects</h2>
+    </x-slot:header>
 
-@section('title','TODO List - Projects')
-
-
-@section('content')
-    <div class="page-header">
-        <h2>Projects</h2>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table projectlist table-striped table-hover">
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
+    <div class="overflow-x-auto">
+        <table class="w-full table projectlist">
+            <tr class="bg-slate-300">
+                <th class="text-left py-2.5 ">Title</th>
                 <th></th>
+                <th class="text-left">Description</th>
+                <th class="w-32"></th>
             </tr>
 
             @foreach ($projects as $row )
-                <tr class="">
-                    <td class="text-left"><a class="" href="{{url('project/'.$row->id.'/tasks')}}">{{ $row->name }}</a></td>
+                <tr class="odd:bg-gray-100 even:bg-transparent hover:bg-gray-200">
+                    <td class="text-left"><a class="text-blue-500" href="{{url('project/'.$row->id.'/tasks')}}">{{ $row->name }}</a>   </td>
+                    <td> <x-link-button href="{{url('project/'.$row->id.'/tasks')}}">Tasks</x-link-button> </td>
                     <td class="text-left"> {{ $row->description }}</td>
-                    <td>
-                        <a class="btn btn-primary btn-sm" href="{{url('project/'.$row->id.'/edit')}}" >
-                            <span class="glyphicon glyphicon-edit"></span>
-                        </a>
-                        <a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirmdelete" data-projectname="{{$row->name}}" data-projectid="{{$row->id}}">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </a>
+                    <td class="py-2 text-right">
+                        <x-link-button :href="url('project/' .$row->id .'/edit') " class="align-middle" >
+                            <x-icon-edit></x-icon-edit>
+                        </x-link-button>
+
+                        <x-danger-button class="ml-2 align-middle" type="button" x-data
+                             x-on:click.prevent="$dispatch('set-modal-data',{action: '{{url('project').'/'.$row->id}}', projectname: '{{$row->name}}'} );  $dispatch('open-modal', 'confirmdelete')" >
+                            <x-icon-trash></x-icon-trash>
+                        </x-danger-button>
                     </td>
                 </tr>
             @endforeach
-
         </table>
-
     </div>
 
-    <div class="btnbar">
-        {{--  $projects->links()  --}}
-        <a class="btn btn-primary" href="{{url('project/create')}}">New Project</a>
+    <div class="mt-5">
+        <x-link-button :href="url('project/create')" >New Project</x-link-button>
     </div>
 
-    <div class="modal fade" id="confirmdelete" role="dialog" aria-labelledby="confirmdeleteLabel">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel"></h4>
-                </div>
-                <div class="modal-body">
-                    Delete Project "<span id="projectname"></span>"?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="delete">Delete</button>
-                </div>
-                <input type="hidden" name="projectid" id="projectid">
+
+    <x-modal name="confirmdelete" maxWidth="md">
+        <form method="post" x-bind:action="action" class="p-6" x-data="{action: '', projectname:''}"
+              x-on:set-modal-data.window="action=$event.detail.action; projectname=$event.detail.projectname ">
+            @csrf
+            @method('delete')
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Delete Project "<span x-text="projectname"></span>"?
+            </h2>
+
+            <div class="mt-6 flex justify-end">
+                <x-secondary-button x-on:click="$dispatch('close')">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+
+                <x-danger-button class="ml-3">
+                    {{ __('Delete') }}
+                </x-danger-button>
             </div>
-        </div>
-    </div>
-    <script>
-        $('#confirmdelete').on('show.bs.modal', function(event){
-            var button = $(event.relatedTarget);
-            var projectname = button.data('projectname');
-            var projectid = button.data('projectid');
-            var modal = $(this);
-            modal.find('#projectname').text(projectname);
-            modal.find('#projectid').val(projectid);
-        })
+        </form>
+    </x-modal>
 
-        $('#delete').on('click', function() {
-            var id = $('#confirmdelete #projectid').val();
-
-            jQuery.post('{{url('/project/')}}'+'/'+id, {_method: 'DELETE', _token: '{{csrf_token()}}' }, function(){
-                location.reload(true);
-            } );
-        });
-    </script>
-@endsection
+</x-app-layout>

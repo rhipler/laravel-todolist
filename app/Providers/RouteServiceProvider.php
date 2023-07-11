@@ -1,63 +1,54 @@
 <?php
 
-namespace Todolist\Providers;
+namespace App\Providers;
 
-use Illuminate\Routing\Router;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
     /**
-     * This namespace is applied to your controller routes.
+     * The path to the "home" route for your application.
      *
-     * In addition, it is set as the URL generator's root namespace.
+     * Typically, users are redirected here after authentication.
      *
      * @var string
      */
-    protected $namespace = 'Todolist\Http\Controllers';
+    public const HOME = '/dashboard';
+
+    protected $namespace = 'App\Http\Controllers';
+
 
     /**
-     * Define your route model bindings, pattern filters, etc.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
+     * Define your route model bindings, pattern filters, and other route configuration.
      */
-    public function boot(Router $router)
+    public function boot(): void
     {
-        //
-        $router->pattern('taskid', '[0-9]+');
-        $router->pattern('projectid', '[0-9]+');
+        Route::pattern('taskid', '[0-9]+');
+        Route::pattern('projectid', '[0-9]+');
 
-        parent::boot($router);
+        $this->configureRateLimiting();
+
+        $this->routes(function () {
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/api.php'));
+
+            Route::middleware('web')->namespace($this->namespace)
+                ->group(base_path('routes/web.php'));
+        });
     }
 
     /**
-     * Define the routes for the application.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
+     * Configure the rate limiters for the application.
      */
-    public function map(Router $router)
+    protected function configureRateLimiting(): void
     {
-        $this->mapWebRoutes($router);
-
-        //
-    }
-
-    /**
-     * Define the "web" routes for the application.
-     *
-     * These routes all receive session state, CSRF protection, etc.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    protected function mapWebRoutes(Router $router)
-    {
-        $router->group([
-            'namespace' => $this->namespace, 'middleware' => 'web',
-        ], function ($router) {
-            require app_path('Http/routes.php');
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
     }
 }

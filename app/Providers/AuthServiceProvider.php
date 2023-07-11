@@ -1,31 +1,29 @@
 <?php
 
-namespace Todolist\Providers;
+namespace App\Providers;
 
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
     /**
-     * The policy mappings for the application.
+     * The model to policy mappings for the application.
      *
-     * @var array
+     * @var array<class-string, class-string>
      */
     protected $policies = [
-        'Todolist\Model' => 'Todolist\Policies\ModelPolicy',
+        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
     ];
 
     /**
-     * Register any application authentication / authorization services.
-     *
-     * @param  \Illuminate\Contracts\Auth\Access\Gate  $gate
-     * @return void
+     * Register any authentication / authorization services.
      */
-    public function boot(GateContract $gate)
+    public function boot(): void
     {
-        $this->registerPolicies($gate);
 
-        //
+        Gate::define('manageusers', fn (User $user) => $user->role->id == 1);
+
     }
 }

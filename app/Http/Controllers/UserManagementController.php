@@ -1,31 +1,19 @@
 <?php
 
-namespace Todolist\Http\Controllers;
+namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-
-use Todolist\Http\Requests;
-use Todolist\Role;
-use Todolist\User;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\View\View;
 
 class UserManagementController extends Controller
 {
 
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-
     public function index()
     {
-        $users = User::paginate(15);
+        $users = User::paginate(10);
 
         return view('userlist',['users'=>$users]);
     }
@@ -34,24 +22,22 @@ class UserManagementController extends Controller
     /**
      * show form for new user
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         return view('createuser',['roles'=>Role::all()]);
     }
 
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-
         $this->validate($request, array(
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'same:passwordrepeat',
             'role_id' => 'required'
         ));
-        // validate// TODO
+
         $user = new User();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
@@ -66,10 +52,8 @@ class UserManagementController extends Controller
     /**
      * show form for edit user
      *
-     * @param $userid
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($userid)
+    public function edit($userid): View
     {
         $user = User::findOrFail($userid);
         return view('edituser',['user' => $user, 'roles'=>Role::all()]);
@@ -78,20 +62,15 @@ class UserManagementController extends Controller
     /**
      * Update the specified user in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
-
         $this->validate($request,[
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:passwordrepeat',
             'role_id' => 'required'
         ]);
-
 
         $user = User::findOrFail($id);
         $user->name = $request->input('name');
@@ -103,21 +82,20 @@ class UserManagementController extends Controller
         }
         $user->save();
 
-        return redirect('/users');
+        return to_route('users.index');
     }
 
 
     /**
      * Remove the specified user from storage.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
      */
     public function destroy($userid)
     {
         User::destroy($userid);
-    }
 
+        return to_route('users.index');
+    }
 
 
 }

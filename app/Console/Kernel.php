@@ -1,6 +1,6 @@
 <?php
 
-namespace Todolist\Console;
+namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -8,23 +8,20 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
+     * Define the application's command schedule.
      */
-    protected $commands = [
-        // Commands\Inspire::class,
-    ];
+    protected function schedule(Schedule $schedule): void
+    {
+        // $schedule->command('inspire')->hourly();
+    }
 
     /**
-     * Define the application's command schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
+     * Register the commands for the application.
      */
-    protected function schedule(Schedule $schedule)
+    protected function commands(): void
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $this->load(__DIR__.'/Commands');
+
+        require base_path('routes/console.php');
     }
 }

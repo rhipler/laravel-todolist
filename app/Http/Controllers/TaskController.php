@@ -1,38 +1,28 @@
 <?php
 
-namespace Todolist\Http\Controllers;
+namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Todolist\Comment;
-use Todolist\ExpendedTime;
-use Todolist\Http\Requests;
-use Todolist\Project;
-use Todolist\Task;
+use App\Models\Comment;
+use App\Models\ExpendedTime;
+use App\Models\Project;
+use App\Models\Task;
+use Illuminate\View\View;
 
 
 class TaskController extends Controller
 {
 
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-
-    /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
-        $tasks = Task::orderBy('id','ASC')->paginate(10);
+        $tasks = Task::orderBy('id','ASC')->paginate(15);
 
         return view('tasklist', ['tasks' => $tasks,'projectid'=>0, 'heading'=>'All Tasks']);
     }
@@ -42,12 +32,10 @@ class TaskController extends Controller
      * list task of Project $projectid
      * @param $projectid
      */
-    public function listTasks($projectid)
+    public function listTasks($projectid): View
     {
         $project = Project::findOrFail($projectid);
-
-        //$tasks = Task::where('projectid',$projectid)->orderBy('id','ASC')->paginate(10);
-        $tasks = $project->tasks()->orderBy('id','ASC')->paginate(10);
+        $tasks = $project->tasks()->orderBy('id','ASC')->paginate(15);
 
         return view('tasklist', ['tasks' => $tasks,'projectid'=>$projectid, 'heading'=>'Tasks of Project '.$project->name] );
     }
@@ -57,9 +45,8 @@ class TaskController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
      */
-    public function create($projectid)
+    public function create($projectid): View
     {
         return view('createtask',['projectid'=>$projectid]);
     }
@@ -68,14 +55,10 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-
-        $this->validate($request, array('name' => 'required|max:255', 'duedate' =>'date_format:Y-m-d','projectid'=>'exists:projects,id'));
-
+        $this->validate($request, array('name' => 'required|max:255', 'duedate' =>'nullable|date_format:Y-m-d','projectid'=>'exists:projects,id'));
 
         $task = new Task();
         $task->name = $request->input('name');
@@ -83,7 +66,6 @@ class TaskController extends Controller
         $task->duedate =  ($request->input('duedate')) ? date('Y-m-d H:i:s', strtotime($request->input('duedate'))) : null;
         $task->projectid = $request->input('projectid');
         $task->createdByUser()->associate( Auth::user());
-
         $task->save();
 
         return redirect('/project/'.$request->input('projectid').'/tasks');
@@ -93,10 +75,8 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id): View
     {
         $task = Task::with(['comments' => function ($query) {
                 $query->orderBy('created_at');
@@ -113,14 +93,10 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(int $id): View
     {
-
         $task = Task::findOrFail($id);
-
 
         return view('edittask', ['task' => $task]);
     }
@@ -129,14 +105,10 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request)
+    public function update(int $id, Request $request): RedirectResponse
     {
-
-        $this->validate($request, array('name' => 'required|max:255', 'duedate' => 'date_format:Y-m-d'));
+        $this->validate($request, array('name' => 'required|max:255', 'duedate' => 'nullable|date_format:Y-m-d'));
 
         $duedate = ($request->input('duedate')) ? date('Y-m-d H:i:s', strtotime($request->input('duedate'))) : null;
 
@@ -153,28 +125,30 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
-        Task::destroy($id);
+        $task = Task::find($id);
+        $pid =  $task->projectid;
+        $task->delete();
+
+        return to_route('tasks.list',$pid);
     }
 
 
-    public function addTime($taskid, Request $request)
+    public function addTime(int $taskid, Request $request): RedirectResponse
     {
-
-        $this->validate($request, array('expdescription' => 'required|max:60', 'exptime' => 'required|numeric', 'expdate' => 'required|date_format:Y-m-d'));
+        $validated = $this->validate($request, [
+            'expdescription' => 'required|max:60',
+            'exptime' => 'required|numeric',
+            'expdate' => 'required|date_format:Y-m-d']);
 
         $task = Task::findOrFail($taskid);
 
-
         $expTime = new ExpendedTime();
-        $expTime->time = $request->input('exptime');
-        $expTime->description = $request->input('expdescription');
-        $expTime->date = $request->input('expdate');
-
+        $expTime->description = $validated['expdescription'];
+        $expTime->time = $validated['exptime'];
+        $expTime->date = $validated['expdate'];
         $expTime->user()->associate(Auth::user());
 
         $task->expendedTimes()->save($expTime);
@@ -182,14 +156,16 @@ class TaskController extends Controller
         return redirect('/tasks/'.$taskid);
     }
 
-    public function deleteTime($timeid)
+    public function deleteTime(int $timeid): RedirectResponse
     {
-        ExpendedTime::destroy($timeid);
-
+        $time = ExpendedTime::find($timeid);
+        $taskid = $time->task_id;
+        $time->delete();
+        return to_route('task.show',$taskid);
     }
 
 
-    public function addComment($taskid, Request $request)
+    public function addComment(int $taskid, Request $request): RedirectResponse
     {
         $this->validate($request, ['comment' => 'required']);
         $task = Task::findOrFail($taskid);
@@ -203,7 +179,7 @@ class TaskController extends Controller
         return redirect('/tasks/'.$taskid);
     }
 
-    public function deleteComment($commentid)
+    public function deleteComment(int $commentid)
     {
         Comment::destroy($commentid);
     }

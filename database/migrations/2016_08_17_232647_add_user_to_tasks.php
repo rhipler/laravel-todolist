@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class AddUserToTasks extends Migration
 {
@@ -13,7 +14,7 @@ class AddUserToTasks extends Migration
     public function up()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->unsignedInteger('created_by');
+            $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
@@ -26,6 +27,7 @@ class AddUserToTasks extends Migration
     public function down()
     {
         Schema::table('tasks', function (Blueprint $table) {
+            $table->dropForeign(['created_by']);
             $table->dropColumn('created_by');
         });
     }
